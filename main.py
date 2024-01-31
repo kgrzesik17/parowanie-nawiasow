@@ -7,7 +7,8 @@ def parser(file):
     tags = []
     opened = []
     closed = []
-
+    opened_temp = []
+    closed_temp = []
 
     file = open("ab.html", "r")
     
@@ -30,10 +31,39 @@ def parser(file):
 
     for i in tags:
         if i.startswith("</"):
-            closed.append(i)
+            closed.append(i[2:-1:])
+            closed_temp.append(i[2:-1:])
         else:
-            opened.append(i)
+            opened.append(i[1:-1:])
+            opened_temp.append(i[1:-1:])
 
+    for i in opened_temp:
+        if i in closed_temp:
+            closed.remove(i)
+
+    for i in closed_temp:
+        if i in opened_temp:
+            opened.remove(i)
+
+    opened_temp = opened
+    closed_temp = closed
+    opened = []
+    closed = []
+
+    for i in opened_temp:
+        i = "<" + i + ">"
+        opened.append(i)
+
+    for i in closed_temp:
+        i = "</" + i + ">"
+        closed.append(i)
+    
+    if not opened and not closed:
+        print("\nPlik został poprawnie sparowany.\n")
+    else:
+        print("\nPlik nie został poprawnie sparowany.")
+        print(f"Otwarte znaczniki, które nie zostały zamknięte: {opened}")
+        print(f"Zamknięte znaczniki, które niezostały otwarte: {closed}\n")
 
 def isset(variable):
     """

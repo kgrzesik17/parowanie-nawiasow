@@ -10,7 +10,7 @@ def parser(file):
     opened_temp = []
     closed_temp = []
 
-    file = open("ab.html", "r")
+    file = open(file, "r")
     
     for line in file:
         line = line.strip()

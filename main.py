@@ -3,13 +3,25 @@
 import os
 
 def parser(file):
+    """
+    Sprawdza praowanie pliku.
+    """
     tag = ""
     tags = []
     opened = []
     closed = []
     opened_temp = []
     closed_temp = []
+    voids = []
 
+
+    voids_file = open("void_elements.txt", "r") # plik zawierające puste znaczniki
+
+    for line in voids_file:
+        line = line.strip()
+
+        voids.append(line)
+        
     file = open(file, "r")
     
     for line in file:
@@ -24,12 +36,12 @@ def parser(file):
             if add == 1:
                 tag += i
 
-            if i == ">":
+            if i == ">" or i == " ":
                 add = 0
                 tags.append(tag)
                 tag = ""
 
-    for i in tags:
+    for i in tags: # dodawanie tagów do listy (w tym pomocniczej)
         if i.startswith("</"):
             closed.append(i[2:-1:])
             closed_temp.append(i[2:-1:])
@@ -37,7 +49,7 @@ def parser(file):
             opened.append(i[1:-1:])
             opened_temp.append(i[1:-1:])
 
-    for i in opened_temp:
+    for i in opened_temp: # usuwanie sparowanych tagów
         if i in closed_temp:
             closed.remove(i)
 
@@ -50,7 +62,17 @@ def parser(file):
     opened = []
     closed = []
 
-    for i in opened_temp:
+    for i in opened_temp: # filtrowanie dopuszczalnych pustych znaczników
+        if i.lower() in voids:
+            opened_temp.remove(i)
+            
+    for i in closed_temp:
+        if i.lower() in voids:
+            closed_temp.remove(i)
+
+    opened_temp = filter(None, opened_temp)
+
+    for i in opened_temp: # dodawnie znaczników (dla wyglądu)
         i = "<" + i + ">"
         opened.append(i)
 
